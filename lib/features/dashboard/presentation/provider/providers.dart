@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:health/health.dart';
 
 final healtFactoryProvider =
-    Provider((ref) => HealthFactory(useHealthConnectIfAvailable: true));
+    Provider((ref) => HealthFactory(useHealthConnectIfAvailable: false));
 
 final healthRepo =
     Provider((ref) => HealthRepoImpl(health: ref.watch(healtFactoryProvider)));

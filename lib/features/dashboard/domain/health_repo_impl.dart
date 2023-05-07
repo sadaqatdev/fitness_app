@@ -8,9 +8,11 @@ import '../../../shared/widgets/snakbar.dart';
 
 class HealthRepoImpl extends HealthRepo {
   final HealthFactory health;
+
   HealthRepoImpl({
     required this.health,
   });
+
   @override
   Future<num> getStepsCount(
       DateTime startDate, DateTime endDate, List<HealthDataType> types) async {
@@ -20,8 +22,11 @@ class HealthRepoImpl extends HealthRepo {
       List<HealthDataPoint> todayData =
           await health.getHealthDataFromTypes(startDate, endDate, types);
 
-      return todayData.fold<num>(0,
-          (previousValue, element) => previousValue + (element.value as num));
+      return todayData.fold<num>(
+          0,
+          (previousValue, element) =>
+              previousValue +
+              (num.parse(element.value.toJson()['numericValue'])));
     } catch (e, s) {
       dp(msg: "Error in geting steps $e ", arg: s);
       return 0;
@@ -30,7 +35,9 @@ class HealthRepoImpl extends HealthRepo {
 
   @override
   Future<bool> hasPermission(List<HealthDataType> types) async {
-    return await health.hasPermissions(types) ?? false;
+    return await health.hasPermissions(types,
+            permissions: [HealthDataAccess.READ_WRITE]) ??
+        false;
   }
 
   @override
@@ -38,7 +45,8 @@ class HealthRepoImpl extends HealthRepo {
     showPermissionDialog(
         "Please give Health Connect/Kit data read permission to work app properly",
         (ctx) async {
-      await health.requestAuthorization(types);
+      await health.requestAuthorization(types,
+          permissions: [HealthDataAccess.READ_WRITE]);
       if (ctx.mounted) Navigator.pop(ctx);
     });
   }
