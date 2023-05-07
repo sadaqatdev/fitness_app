@@ -30,11 +30,9 @@ class DashBoardNotifier extends StateNotifier<DashBoardState> {
   }
 
   getHealthDataPermission() async {
-    var isGranted = await healthRepo.requestAuthorization(types);
+    await healthRepo.requestAuthorization(types);
 
-    if (isGranted) {
-      getStepsCountData();
-    }
+    getStepsCountData();
   }
 
   getStepsCountData() async {
