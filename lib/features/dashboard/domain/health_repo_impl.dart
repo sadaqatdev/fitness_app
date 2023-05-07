@@ -1,3 +1,4 @@
+import 'package:fitness_app/shared/utils/log_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
 
@@ -15,11 +16,16 @@ class HealthRepoImpl extends HealthRepo {
       DateTime startDate, DateTime endDate, List<HealthDataType> types) async {
     //
 
-    List<HealthDataPoint> todayData =
-        await health.getHealthDataFromTypes(startDate, endDate, types);
+    try {
+      List<HealthDataPoint> todayData =
+          await health.getHealthDataFromTypes(startDate, endDate, types);
 
-    return todayData.fold<num>(
-        0, (previousValue, element) => previousValue + (element.value as num));
+      return todayData.fold<num>(0,
+          (previousValue, element) => previousValue + (element.value as num));
+    } catch (e, s) {
+      dp(msg: "Error in geting steps $e ", arg: s);
+      return 0;
+    }
   }
 
   @override
@@ -33,8 +39,7 @@ class HealthRepoImpl extends HealthRepo {
         "Please give Health Connect/Kit data read permission to work app properly",
         (ctx) async {
       await health.requestAuthorization(types);
-
-      Navigator.pop(ctx);
+      if (ctx.mounted) Navigator.pop(ctx);
     });
   }
 }
